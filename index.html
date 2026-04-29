@@ -1,0 +1,845 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUREX Cripto Academy — Módulo 3: Seguridad</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #080A08;
+  --bg2: #0E110E;
+  --bg3: #141814;
+  --line: #2A362A;
+  --green: #2ECC71;
+  --green2: #1A7A43;
+  --green3: rgba(46,204,113,0.08);
+  --green4: rgba(46,204,113,0.04);
+  --red: #E74C3C;
+  --red2: rgba(231,76,60,0.09);
+  --amber: #F39C12;
+  --amber2: rgba(243,156,18,0.09);
+  --white: #F0F5F0;
+  --muted: #C0CCC0;
+  --muted2: #90A090;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--white); font-family:'Crimson Pro',serif; overflow-x:hidden; line-height:1.6; }
+
+/* SCAN LINE EFFECT */
+body::before {
+  content:'';
+  position:fixed; inset:0;
+  background:repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,0,0,0.03) 2px, rgba(0,0,0,0.03) 4px);
+  pointer-events:none; z-index:9998;
+}
+
+/* NAV */
+nav {
+  position:fixed; top:0; left:0; right:0; z-index:200;
+  padding:14px 48px;
+  display:flex; justify-content:space-between; align-items:center;
+  background:rgba(8,10,8,0.96);
+  backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--line);
+}
+.nav-logo {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px; letter-spacing:3px; color:var(--white);
+}
+.nav-logo span { color:var(--green); }
+.nav-mod {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px; letter-spacing:3px; color:var(--muted);
+  text-transform:uppercase;
+}
+.nav-links { display:flex; gap:4px; }
+.nlink {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px; letter-spacing:1px; text-transform:uppercase;
+  color:var(--muted); text-decoration:none;
+  padding:7px 12px; border:1px solid var(--line);
+  transition:all 0.15s;
+}
+.nlink:hover { color:var(--green); border-color:var(--green2); }
+
+/* HERO */
+.hero {
+  min-height:100vh;
+  display:flex; flex-direction:column;
+  justify-content:flex-end;
+  padding:120px 64px 80px;
+  position:relative; overflow:hidden;
+}
+.hero-bg {
+  position:absolute; inset:0;
+  background:
+    radial-gradient(ellipse 60% 50% at 80% 40%, rgba(46,204,113,0.04) 0%, transparent 70%),
+    radial-gradient(ellipse 40% 60% at 20% 70%, rgba(231,76,60,0.03) 0%, transparent 60%);
+}
+.hero-grid {
+  position:absolute; inset:0;
+  background-image:
+    linear-gradient(var(--line) 1px, transparent 1px),
+    linear-gradient(90deg, var(--line) 1px, transparent 1px);
+  background-size: 60px 60px;
+  opacity:0.4;
+  mask-image:radial-gradient(ellipse 80% 80% at 70% 50%, black 0%, transparent 70%);
+}
+.hero-module {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px; letter-spacing:5px; text-transform:uppercase;
+  color:var(--green); margin-bottom:24px;
+  opacity:0; animation:fadeIn 0.6s ease forwards 0.1s;
+}
+.hero-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(72px,12vw,160px);
+  letter-spacing:-2px; line-height:0.88;
+  margin-bottom:32px;
+  opacity:0; animation:fadeIn 0.6s ease forwards 0.3s;
+}
+.hero-title .line2 { color:var(--green); display:block; }
+.hero-title .line3 { color:var(--muted2); display:block; font-size:clamp(28px,4vw,56px); letter-spacing:2px; margin-top:8px; }
+.hero-desc {
+  font-size:19px; color:var(--muted); line-height:1.9;
+  max-width:560px; margin-bottom:48px;
+  opacity:0; animation:fadeIn 0.6s ease forwards 0.5s;
+}
+.hero-desc strong { color:var(--white); }
+.hero-stats {
+  display:flex; gap:0;
+  opacity:0; animation:fadeIn 0.6s ease forwards 0.7s;
+}
+.hstat {
+  padding:20px 32px; border:1px solid var(--line);
+  border-right:none; text-align:center;
+}
+.hstat:last-child { border-right:1px solid var(--line); }
+.hstat-val {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:40px; color:var(--green); line-height:1;
+}
+.hstat-lbl {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px; letter-spacing:2px; color:var(--muted);
+  text-transform:uppercase; margin-top:4px;
+}
+.scroll-hint {
+  position:absolute; bottom:32px; right:64px;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px; letter-spacing:3px; color:var(--muted2);
+  text-transform:uppercase;
+  writing-mode:vertical-lr;
+  display:flex; align-items:center; gap:12px;
+  opacity:0; animation:fadeIn 1s ease forwards 1s;
+}
+.scroll-hint::before {
+  content:''; width:1px; height:60px;
+  background:linear-gradient(to bottom, var(--green2), transparent);
+  animation:pulse 2s ease infinite;
+}
+
+/* LAYOUT */
+.wrap { max-width:960px; margin:0 auto; padding:88px 24px; }
+.hline { width:100%; height:1px; background:var(--line); max-width:960px; margin:0 auto; }
+
+/* SECTION */
+.stag {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px; letter-spacing:4px; color:var(--green);
+  text-transform:uppercase; margin-bottom:10px;
+}
+.stitle {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(48px,7vw,88px);
+  letter-spacing:-1px; line-height:0.92; margin-bottom:12px;
+}
+.stitle em { color:var(--green); font-style:normal; }
+.sintro {
+  font-size:19px; color:var(--muted); line-height:1.9;
+  max-width:640px; margin-bottom:52px;
+}
+.sintro strong { color:var(--white); }
+
+/* ALERT BOX */
+.alert {
+  display:flex; gap:16px; align-items:flex-start;
+  padding:20px 24px; margin-bottom:20px;
+  font-size:16px; line-height:1.85;
+}
+.alert.danger { background:var(--red2); border:1px solid rgba(231,76,60,0.2); border-left:3px solid var(--red); }
+.alert.warn { background:var(--amber2); border:1px solid rgba(243,156,18,0.2); border-left:3px solid var(--amber); }
+.alert.safe { background:var(--green3); border:1px solid rgba(46,204,113,0.15); border-left:3px solid var(--green); }
+.alert-icon { font-size:22px; flex-shrink:0; margin-top:2px; }
+.alert-title { font-family:'Bebas Neue',sans-serif; font-size:20px; letter-spacing:1px; margin-bottom:4px; }
+.alert.danger .alert-title { color:var(--red); }
+.alert.warn .alert-title { color:var(--amber); }
+.alert.safe .alert-title { color:var(--green); }
+.alert-text { color:var(--muted); }
+.alert-text strong { color:var(--white); }
+
+/* RULE CARDS */
+.rules { display:grid; gap:2px; margin-bottom:32px; }
+.rule {
+  background:var(--bg2); border:1px solid var(--line);
+  padding:28px 32px;
+  display:grid; grid-template-columns:56px 1fr; gap:20px; align-items:start;
+  transition:border-color 0.2s;
+}
+.rule:hover { border-color:var(--green2); }
+.rule.bad { border-left:3px solid var(--red); }
+.rule.good { border-left:3px solid var(--green); }
+.rule-num {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:52px; color:var(--line); line-height:1; transition:color 0.2s;
+}
+.rule:hover .rule-num { color:var(--green2); }
+.rule-title { font-family:'Bebas Neue',sans-serif; font-size:24px; letter-spacing:0.5px; margin-bottom:6px; }
+.rule.bad .rule-title { color:var(--red); }
+.rule.good .rule-title { color:var(--green); }
+.rule-body { font-size:16px; color:var(--muted); line-height:1.8; }
+.rule-body strong { color:var(--white); }
+.rule-tag {
+  display:inline-flex; align-items:center; gap:6px;
+  font-family:'IBM Plex Mono',monospace; font-size:10px; letter-spacing:1px;
+  padding:5px 11px; margin-top:10px;
+}
+.rule-tag.danger { background:var(--red2); border:1px solid rgba(231,76,60,0.2); color:var(--red); }
+.rule-tag.safe { background:var(--green3); border:1px solid rgba(46,204,113,0.15); color:var(--green); }
+
+/* PASSWORD STRENGTH */
+.pw-demo {
+  background:var(--bg2); border:1px solid var(--line);
+  padding:32px; margin-bottom:24px;
+}
+.pw-demo-title {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px; letter-spacing:3px; color:var(--green);
+  text-transform:uppercase; margin-bottom:20px;
+}
+.pw-example { margin-bottom:16px; }
+.pw-string {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:16px; padding:12px 16px;
+  background:var(--bg3); border:1px solid var(--line);
+  margin-bottom:8px; letter-spacing:1px;
+  display:flex; align-items:center; justify-content:space-between;
+}
+.pw-string .pw-val { color:var(--white); }
+.pw-bar-wrap { height:4px; background:var(--bg3); border-radius:2px; margin-bottom:4px; }
+.pw-bar { height:100%; border-radius:2px; transition:width 0.5s ease; }
+.pw-bar.weak { background:var(--red); width:20%; }
+.pw-bar.medium { background:var(--amber); width:55%; }
+.pw-bar.strong { background:var(--green); width:100%; }
+.pw-verdict {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:12px; letter-spacing:1px; text-transform:uppercase;
+}
+.pw-verdict.weak { color:var(--red); }
+.pw-verdict.medium { color:var(--amber); }
+.pw-verdict.strong { color:var(--green); }
+
+/* SEED PHRASE */
+.seed-grid {
+  display:grid; grid-template-columns:repeat(6,1fr); gap:2px;
+  margin-bottom:20px;
+}
+.seed-word {
+  background:var(--bg2); border:1px solid var(--line);
+  padding:10px 8px; text-align:center;
+}
+.seed-word .sw-num {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:8px; letter-spacing:1px; color:var(--muted2);
+  margin-bottom:4px;
+}
+.seed-word .sw-word {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px; color:var(--green);
+  filter:blur(4px); transition:filter 0.3s;
+  user-select:none;
+}
+.seed-grid:hover .sw-word { filter:blur(0); }
+.seed-reveal {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:13px; letter-spacing:1px; color:var(--muted);
+  text-align:center; margin-bottom:24px;
+  text-transform:uppercase;
+}
+
+/* DO / DON'T GRID */
+.dod-grid { display:grid; grid-template-columns:1fr 1fr; gap:2px; margin-bottom:32px; }
+.dod-col { background:var(--bg2); border:1px solid var(--line); padding:28px; }
+.dod-col.dont { border-top:3px solid var(--red); }
+.dod-col.do { border-top:3px solid var(--green); }
+.dod-header {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:28px; letter-spacing:1px; margin-bottom:20px;
+  padding-bottom:14px; border-bottom:1px solid var(--line);
+}
+.dod-col.dont .dod-header { color:var(--red); }
+.dod-col.do .dod-header { color:var(--green); }
+.dod-item {
+  display:flex; gap:10px; margin-bottom:12px;
+  font-size:16px; color:var(--muted); line-height:1.8; align-items:flex-start;
+}
+.dod-dot {
+  width:6px; height:6px; border-radius:50%; margin-top:6px; flex-shrink:0;
+}
+.dod-col.dont .dod-dot { background:var(--red); }
+.dod-col.do .dod-dot { background:var(--green); }
+
+/* 2FA STEPS */
+.steps { display:grid; gap:2px; }
+.step {
+  background:var(--bg2); border:1px solid var(--line);
+  padding:28px 32px;
+  display:grid; grid-template-columns:60px 1fr; gap:20px; align-items:start;
+  transition:border-color 0.2s;
+}
+.step:hover { border-color:var(--green2); }
+.step-n {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:56px; color:var(--green); line-height:0.9;
+}
+.step-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:22px; letter-spacing:0.5px; color:var(--white); margin-bottom:6px;
+}
+.step-body { font-size:15px; color:var(--muted); line-height:1.8; }
+.step-body strong { color:var(--white); }
+.step-body code {
+  font-family:'IBM Plex Mono',monospace; font-size:12px;
+  background:var(--bg3); border:1px solid var(--line);
+  padding:2px 8px; color:var(--green);
+}
+.step-tip {
+  display:inline-flex; gap:6px; align-items:center;
+  background:var(--green3); border:1px solid rgba(46,204,113,0.15);
+  padding:7px 13px; margin-top:10px;
+  font-family:'IBM Plex Mono',monospace; font-size:10px; color:var(--green);
+  letter-spacing:0.5px;
+}
+
+/* SCAM CARDS */
+.scams { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:2px; margin-bottom:32px; }
+.scam {
+  background:var(--bg2); border:1px solid var(--line);
+  border-top:2px solid var(--red);
+  padding:28px; transition:border-color 0.2s;
+}
+.scam:hover { border-color:rgba(231,76,60,0.4); }
+.scam-icon { font-size:28px; margin-bottom:14px; }
+.scam-name {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:20px; letter-spacing:0.5px; color:var(--red); margin-bottom:8px;
+}
+.scam-desc { font-size:15px; color:var(--muted); line-height:1.75; margin-bottom:12px; }
+.scam-signal {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:10px; letter-spacing:1px; color:var(--amber);
+  text-transform:uppercase; border-top:1px solid var(--line);
+  padding-top:10px; margin-top:10px;
+}
+
+/* EMERGENCY */
+.emergency { background:var(--bg2); border:1px solid rgba(231,76,60,0.3); border-left:4px solid var(--red); padding:32px; margin-bottom:32px; }
+.emergency-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:32px; color:var(--red); letter-spacing:1px; margin-bottom:20px;
+}
+.emergency-steps { display:grid; gap:10px; }
+.estep {
+  display:flex; gap:14px; align-items:flex-start;
+  font-size:16px; color:var(--muted); line-height:1.75;
+}
+.estep-n {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:28px; color:var(--red); line-height:1; min-width:30px;
+}
+.estep strong { color:var(--white); display:block; margin-bottom:2px; }
+
+/* WALLET COMPARE */
+.wallet-compare { display:grid; grid-template-columns:1fr 1fr; gap:2px; margin-bottom:24px; }
+.wc { background:var(--bg2); border:1px solid var(--line); padding:28px; }
+.wc.exchange { border-top:3px solid var(--amber); }
+.wc.cold { border-top:3px solid var(--green); }
+.wc-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:26px; letter-spacing:0.5px; margin-bottom:6px;
+}
+.wc.exchange .wc-title { color:var(--amber); }
+.wc.cold .wc-title { color:var(--green); }
+.wc-sub {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:11px; letter-spacing:1px; color:var(--muted);
+  text-transform:uppercase; margin-bottom:18px;
+  padding-bottom:14px; border-bottom:1px solid var(--line);
+}
+.wc-item { display:flex; gap:8px; margin-bottom:10px; font-size:15px; color:var(--muted); line-height:1.7; align-items:flex-start; }
+.wc-dot { width:5px; height:5px; border-radius:50%; margin-top:6px; flex-shrink:0; }
+.wc.exchange .wc-dot { background:var(--amber); }
+.wc.cold .wc-dot { background:var(--green); }
+
+/* GOLDEN RULES */
+.golden { display:grid; gap:2px; }
+.gr {
+  background:var(--bg2); border:1px solid var(--line);
+  padding:24px 28px;
+  display:flex; gap:20px; align-items:center;
+  transition:border-color 0.2s;
+}
+.gr:hover { border-color:var(--green2); }
+.gr-num {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:64px; color:var(--line); line-height:1;
+  min-width:64px; text-align:center; transition:color 0.2s;
+}
+.gr:hover .gr-num { color:var(--green2); }
+.gr-text { font-size:17px; color:var(--muted); line-height:1.75; }
+.gr-text strong { color:var(--white); font-size:17px; display:block; margin-bottom:3px; }
+
+/* DISCLAIMER */
+.disclaimer {
+  background:var(--bg2); border:1px solid var(--line);
+  padding:24px 28px; margin-top:40px;
+}
+.disc-lbl {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:9px; letter-spacing:3px; color:var(--muted2);
+  text-transform:uppercase; margin-bottom:10px;
+}
+.disc-text { font-size:14px; color:var(--muted); line-height:1.8; }
+
+/* CTA */
+.cta {
+  text-align:center; padding:100px 24px;
+  background:var(--bg2); border-top:1px solid var(--line);
+  position:relative; overflow:hidden;
+}
+.cta::before {
+  content:''; position:absolute; inset:0;
+  background:radial-gradient(ellipse 50% 60% at 50% 100%, rgba(46,204,113,0.05) 0%, transparent 70%);
+}
+.cta-title {
+  font-family:'Bebas Neue',sans-serif;
+  font-size:clamp(48px,8vw,96px);
+  letter-spacing:-1px; line-height:0.9; margin-bottom:20px;
+}
+.cta-title span { color:var(--green); }
+.cta-sub { font-size:16px; color:var(--muted); max-width:440px; margin:0 auto 36px; line-height:1.7; }
+.cta-badge {
+  display:inline-flex; align-items:center; gap:10px;
+  background:var(--green3); border:1px solid var(--green2);
+  padding:14px 28px;
+  font-family:'IBM Plex Mono',monospace; font-size:10px;
+  letter-spacing:2px; color:var(--green); text-transform:uppercase;
+}
+
+/* ANIM */
+@keyframes fadeIn { from{opacity:0;transform:translateY(16px)} to{opacity:1;transform:translateY(0)} }
+@keyframes pulse { 0%,100%{opacity:0.3} 50%{opacity:1} }
+.fade { opacity:0; transform:translateY(20px); transition:opacity 0.55s ease, transform 0.55s ease; }
+.fade.on { opacity:1; transform:translateY(0); }
+
+@media(max-width:768px){
+  nav{padding:12px 18px;} .nav-links,.nav-mod{display:none;}
+  .hero{padding:100px 24px 60px;}
+  .wrap{padding:60px 18px;}
+  .hero-stats{flex-wrap:wrap;gap:0;}
+  .hstat{flex:1;min-width:120px;}
+  .dod-grid{grid-template-columns:1fr;}
+  .wallet-compare{grid-template-columns:1fr;}
+  .seed-grid{grid-template-columns:repeat(4,1fr);}
+  .step{grid-template-columns:1fr;gap:8px;}
+  .step-n{font-size:36px;}
+  .rule{grid-template-columns:1fr;gap:8px;}
+  .rule-num{font-size:36px;}
+  .gr{flex-direction:column;gap:8px;}
+  .gr-num{font-size:40px;min-width:auto;}
+  .scams{grid-template-columns:1fr;}
+  .scroll-hint{display:none;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">AUREX <span>CRIPTO</span> ACADEMY</div>
+  
+  <div class="nav-links">
+    <a href="#contrasenas" class="nlink">Contraseñas</a>
+    <a href="#semilla" class="nlink">Frase semilla</a>
+    <a href="#2fa" class="nlink">2FA</a>
+    <a href="#estafas" class="nlink">Estafas</a>
+    <a href="#wallets" class="nlink">Wallets</a>
+    <a href="#reglas" class="nlink">Reglas de oro</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid"></div>
+  <div class="hero-module">AUREX Cripto Academy</div>
+  <h1 class="hero-title">
+    SEGURIDAD
+    <span class="line2">BÁSICA</span>
+    <span class="line3">Lo que nadie te dice — hasta que es tarde</span>
+  </h1>
+  <p class="hero-desc">En cripto no hay banco que te llame si algo sale mal. No hay servicio al cliente que revierta una transacción. <strong>La seguridad es tu responsabilidad.</strong> Este módulo te enseña a protegerte desde el día uno.</p>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-val">6</div><div class="hstat-lbl">Temas críticos</div></div>
+    <div class="hstat"><div class="hstat-val">12</div><div class="hstat-lbl">Reglas de oro</div></div>
+    <div class="hstat"><div class="hstat-val">5</div><div class="hstat-lbl">Estafas comunes</div></div>
+    <div class="hstat"><div class="hstat-val">$0</div><div class="hstat-lbl">Costo del error</div></div>
+  </div>
+  <div class="scroll-hint">Scroll para aprender</div>
+</div>
+
+<!-- INTRO CRÍTICA -->
+<div class="wrap">
+  <div class="alert danger fade">
+    <div class="alert-icon">🚨</div>
+    <div>
+      <div class="alert-title">Esto es diferente a tu banco</div>
+      <div class="alert-text">Si alguien roba tu contraseña de banco, puedes llamar y bloquearlo. En cripto, <strong>si pierdes acceso o alguien entra a tu cuenta, no hay forma de recuperar ese dinero.</strong> Ninguna. Las transacciones son irreversibles. Por eso la seguridad no es opcional — es la base de todo.</div>
+    </div>
+  </div>
+</div>
+
+<div class="hline"></div>
+
+<!-- CONTRASEÑAS -->
+<div class="wrap" id="contrasenas">
+  <div class="stag">01 — El primer escudo</div>
+  <h2 class="stitle">CONTRA<em>SEÑAS</em></h2>
+  <p class="sintro">Tu contraseña es la primera línea de defensa. La mayoría de las cuentas hackeadas tienen una cosa en común: <strong>contraseñas débiles o reutilizadas.</strong></p>
+
+  <div class="pw-demo fade">
+    <div class="pw-demo-title">// Comparativa de contraseñas</div>
+    <div class="pw-example">
+      <div class="pw-string"><span class="pw-val">maria1990</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--red);">DÉBIL</span></div>
+      <div class="pw-bar-wrap"><div class="pw-bar weak"></div></div>
+      <div class="pw-verdict weak">Hackeable en segundos con ataques de diccionario</div>
+    </div>
+    <div class="pw-example">
+      <div class="pw-string"><span class="pw-val">Cripto2024!</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--amber);">MEDIA</span></div>
+      <div class="pw-bar-wrap"><div class="pw-bar medium"></div></div>
+      <div class="pw-verdict medium">Mejor — pero predecible. Patrón: Palabra+Año+Símbolo</div>
+    </div>
+    <div class="pw-example">
+      <div class="pw-string"><span class="pw-val">Tr3!nMx@84#Lk$vQ</span><span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--green);">FUERTE</span></div>
+      <div class="pw-bar-wrap"><div class="pw-bar strong"></div></div>
+      <div class="pw-verdict strong">16+ caracteres, aleatoria, sin patrón. Tomaría siglos hackearla</div>
+    </div>
+  </div>
+
+  <div class="rules fade">
+    <div class="rule good">
+      <div class="rule-num">01</div>
+      <div>
+        <div class="rule-title">Usa un gestor de contraseñas</div>
+        <div class="rule-body">No puedes memorizar 20 contraseñas únicas y seguras — nadie puede. Usa <strong>Bitwarden</strong> (gratuito) o <strong>1Password</strong>. Generan contraseñas aleatorias y las guardan cifradas. Solo necesitas recordar una contraseña maestra.</div>
+        <div class="rule-tag safe">✓ Recomendado</div>
+      </div>
+    </div>
+    <div class="rule bad">
+      <div class="rule-num">02</div>
+      <div>
+        <div class="rule-title">Nunca reutilices contraseñas</div>
+        <div class="rule-body">Si usas la misma contraseña en tu correo, Binance y redes sociales — cuando hackeen <strong>cualquiera de esas plataformas</strong>, tienen acceso a todo. Esto se llama "credential stuffing" y es el ataque más común.</div>
+        <div class="rule-tag danger">✗ Error crítico</div>
+      </div>
+    </div>
+    <div class="rule bad">
+      <div class="rule-num">03</div>
+      <div>
+        <div class="rule-title">No guardes contraseñas en notas, WhatsApp ni fotos</div>
+        <div class="rule-body">Una foto de tu contraseña en galería, un mensaje en WhatsApp o una nota en tu celular son los métodos más inseguros. Si alguien accede a tu teléfono — <strong>tienen todo.</strong></div>
+        <div class="rule-tag danger">✗ Error crítico</div>
+      </div>
+    </div>
+    <div class="rule good">
+      <div class="rule-num">04</div>
+      <div>
+        <div class="rule-title">Contraseña del correo: la más importante de todas</div>
+        <div class="rule-body">Tu correo electrónico es la llave maestra de todo. Si alguien accede a tu correo, puede resetear <strong>todas tus contraseñas</strong> de todos lados. Protégelo con la contraseña más fuerte y con 2FA activado.</div>
+        <div class="rule-tag safe">✓ Prioridad máxima</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="hline"></div>
+
+<!-- FRASE SEMILLA -->
+<div class="wrap" id="semilla">
+  <div class="stag">02 — Lo más sagrado</div>
+  <h2 class="stitle">FRASE <em>SEMILLA</em></h2>
+  <p class="sintro">Si existe una sola cosa en este módulo que debes entender perfectamente, es esta. La frase semilla es <strong>la llave maestra de tu wallet</strong> — quien la tiene, tiene tu dinero. Para siempre.</p>
+
+  <div class="alert warn fade">
+    <div class="alert-icon">⚠️</div>
+    <div>
+      <div class="alert-title">¿Qué es la frase semilla?</div>
+      <div class="alert-text">Cuando creas una billetera cripto (Exodus, Trust Wallet, MetaMask), el sistema genera automáticamente una secuencia de <strong>12 o 24 palabras en inglés en orden específico.</strong> Esas palabras son tu llave maestra. Con ellas, cualquier persona puede restaurar tu wallet en cualquier dispositivo del mundo — con todo tu dinero adentro.</div>
+    </div>
+  </div>
+
+  <p style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:3px;color:var(--muted);text-transform:uppercase;margin-bottom:12px;text-align:center;" class="fade">// Ejemplo de frase semilla de 12 palabras (pasa el cursor para ver)</p>
+
+  <div class="seed-grid fade">
+    <div class="seed-word"><div class="sw-num">01</div><div class="sw-word">river</div></div>
+    <div class="seed-word"><div class="sw-num">02</div><div class="sw-word">table</div></div>
+    <div class="seed-word"><div class="sw-num">03</div><div class="sw-word">forest</div></div>
+    <div class="seed-word"><div class="sw-num">04</div><div class="sw-word">candle</div></div>
+    <div class="seed-word"><div class="sw-num">05</div><div class="sw-word">storm</div></div>
+    <div class="seed-word"><div class="sw-num">06</div><div class="sw-word">mirror</div></div>
+    <div class="seed-word"><div class="sw-num">07</div><div class="sw-word">bridge</div></div>
+    <div class="seed-word"><div class="sw-num">08</div><div class="sw-word">ocean</div></div>
+    <div class="seed-word"><div class="sw-num">09</div><div class="sw-word">silver</div></div>
+    <div class="seed-word"><div class="sw-num">10</div><div class="sw-word">garden</div></div>
+    <div class="seed-word"><div class="sw-num">11</div><div class="sw-word">anchor</div></div>
+    <div class="seed-word"><div class="sw-num">12</div><div class="sw-word">cloud</div></div>
+  </div>
+  <div class="seed-reveal fade">↑ Pasa el cursor sobre las palabras para revelarlas · Estas palabras son solo un ejemplo</div>
+
+  <div class="dod-grid fade">
+    <div class="dod-col dont">
+      <div class="dod-header">❌ NUNCA HAGAS ESTO</div>
+      <div class="dod-item"><div class="dod-dot"></div><span>Escribirla en notas del celular</span></div>
+      <div class="dod-item"><div class="dod-dot"></div><span>Tomarle foto y guardarla en galería</span></div>
+      <div class="dod-item"><div class="dod-dot"></div><span>Mandarla por WhatsApp o Telegram</span></div>
+      <div class="dod-item"><div class="dod-dot"></div><span>Guardarla en Google Drive o iCloud</span></div>
+      <div class="dod-item"><div class="dod-dot"></div><span>Compartirla con tu pareja, familiar o amigo</span></div>
+      <div class="dod-item"><div class="dod-dot"></div><span>Escribirla en un correo electrónico</span></div>
+      <div class="dod-item"><div class="dod-dot"></div><span>Ingresarla en sitios web que la pidan</span></div>
+      <div class="dod-item"><div class="dod-dot"></div><span>Decírsela a alguien de "soporte técnico"</span></div>
+    </div>
+    <div class="dod-col do">
+      <div class="dod-header">✓ ASÍ SE PROTEGE</div>
+      <div class="dod-item"><div class="dod-dot"></div><span>Escríbela a mano en papel físico</span></div>
+      <div class="dod-item"><div class="dod-dot"></div><span>Guarda ese papel en un lugar seguro (caja fuerte, sobre sellado)</span></div>
+      <div class="dod-item"><div class="dod-dot"></div><span>Haz 2 copias y guárdalas en lugares distintos</span></div>
+      <div class="dod-item"><div class="dod-dot"></div><span>Considera grabarla en metal (existen placas para esto)</span></div>
+      <div class="dod-item"><div class="dod-dot"></div><span>Verifica que la copiaste correctamente antes de cerrar la app</span></div>
+      <div class="dod-item"><div class="dod-dot"></div><span>Nunca la ingreses a menos que estés restaurando TU wallet</span></div>
+      <div class="dod-item"><div class="dod-dot"></div><span>Trátala como si fuera el PIN de tu tarjeta de débito — pero 100x más importante</span></div>
+    </div>
+  </div>
+
+  <div class="alert danger fade">
+    <div class="alert-icon">🚨</div>
+    <div>
+      <div class="alert-title">Regla absoluta — Sin excepciones</div>
+      <div class="alert-text"><strong>Ninguna plataforma, soporte técnico, especialista ni miembro del equipo de AUREX te pedirá jamás tu frase semilla.</strong> Si alguien la pide — sea quien sea — es una estafa. Cierra la conversación inmediatamente.</div>
+    </div>
+  </div>
+
+  <div class="alert safe fade">
+    <div class="alert-icon">💡</div>
+    <div>
+      <div class="alert-title">Frase semilla vs Exchange</div>
+      <div class="alert-text">En Binance <strong>no existe frase semilla</strong> porque Binance custodia tu cripto (como un banco). La frase semilla solo aparece cuando creas una <strong>billetera propia</strong> como Exodus, Trust Wallet o MetaMask. Si aún no tienes una, no te preocupes — el Módulo 6 te guía paso a paso.</div>
+    </div>
+  </div>
+</div>
+
+<div class="hline"></div>
+
+<!-- 2FA -->
+<div class="wrap" id="2fa">
+  <div class="stag">03 — Segunda capa de protección</div>
+  <h2 class="stitle">GOOGLE <em>AUTHENTICATOR</em></h2>
+  <p class="sintro">El 2FA (autenticación de dos factores) es como poner una segunda cerradura a tu cuenta. Aunque alguien tenga tu contraseña, <strong>no puede entrar sin el código de tu celular.</strong></p>
+
+  <div class="alert safe fade">
+    <div class="alert-icon">🔐</div>
+    <div>
+      <div class="alert-title">¿Cómo funciona el 2FA?</div>
+      <div class="alert-text">Cada 30 segundos, Google Authenticator genera un código de 6 dígitos único en tu celular. Para entrar a tu cuenta de Binance (u otras plataformas), necesitas: <strong>tu contraseña + ese código del momento.</strong> Sin tu celular físico, nadie puede entrar — aunque tenga tu contraseña.</div>
+    </div>
+  </div>
+
+  <div class="steps fade">
+    <div class="step">
+      <div class="step-n">01</div>
+      <div>
+        <div class="step-title">Descargar Google Authenticator</div>
+        <div class="step-body">Ve al App Store (iPhone) o Google Play (Android) y busca <strong>"Google Authenticator"</strong>. Es la app oficial de Google — ícono de candado en colores. Descárgala e instálala. Es completamente gratuita.</div>
+        <div class="step-tip">✓ También funciona Microsoft Authenticator — igualmente confiable</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">02</div>
+      <div>
+        <div class="step-title">Activarlo en Binance</div>
+        <div class="step-body">En Binance ve a: <code>Perfil → Seguridad → Autenticación de dos factores → Google Authenticator</code>.<br><br>Binance te mostrará un <strong>código QR</strong>. Abre Google Authenticator → toca el <strong>+</strong> → "Escanear código QR" → apunta la cámara al QR.</div>
+        <div class="step-tip">✓ Guarda el código de respaldo que Binance te da — por si pierdes el celular</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">03</div>
+      <div>
+        <div class="step-title">Verificar que funciona</div>
+        <div class="step-body">Una vez escaneado el QR, Binance te pedirá ingresar el código de 6 dígitos que aparece en Google Authenticator para confirmar la activación. Escríbelo rápido — <strong>cambia cada 30 segundos.</strong></div>
+        <div class="step-tip">✓ Desde ese momento, cada inicio de sesión pedirá tu contraseña + el código del momento</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-n">04</div>
+      <div>
+        <div class="step-title">Activarlo en todas tus plataformas</div>
+        <div class="step-body">No solo Binance. Activa el 2FA en: <strong>tu correo electrónico</strong> (Gmail, Outlook), redes sociales, cualquier otra plataforma cripto que uses.<br><br>Google Authenticator puede tener múltiples cuentas al mismo tiempo — una app para todo.</div>
+        <div class="step-tip">✓ Si cambias de celular: usa la opción "Exportar cuentas" ANTES de borrar el teléfono viejo</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="alert warn fade" style="margin-top:20px;">
+    <div class="alert-icon">⚠️</div>
+    <div>
+      <div class="alert-title">SMS no es suficiente</div>
+      <div class="alert-text">Muchas plataformas ofrecen 2FA por SMS (código al celular). <strong>Es mejor que nada, pero no es lo más seguro.</strong> Los hackers pueden clonar tarjetas SIM y recibir tus SMS. Siempre que puedas, elige Google Authenticator sobre SMS.</div>
+    </div>
+  </div>
+</div>
+
+<div class="hline"></div>
+
+<!-- ESTAFAS -->
+<div class="wrap" id="estafas">
+  <div class="stag">04 — Reconoce el peligro</div>
+  <h2 class="stitle">ESTAFAS <em>COMUNES</em></h2>
+  <p class="sintro">El 90% de las pérdidas en cripto no son por hackeos técnicos — son porque alguien <strong>engañó al usuario para que entregara sus datos.</strong> Conocer los patrones es tu mejor defensa.</p>
+
+  <div class="scams fade">
+    <div class="scam">
+      <div class="scam-icon">🎣</div>
+      <div class="scam-name">Phishing</div>
+      <div class="scam-desc">Te llega un correo o mensaje que parece de Binance, con un link que lleva a una web falsa idéntica a la original. Ingresas tu usuario y contraseña — y se los das al hacker.</div>
+      <div class="scam-signal">🔴 Señal: El link no es exactamente binance.com — tiene letras extra o dominio diferente</div>
+    </div>
+    <div class="scam">
+      <div class="scam-icon">📞</div>
+      <div class="scam-name">Falso soporte técnico</div>
+      <div class="scam-desc">Alguien te contacta diciendo ser del soporte de Binance o AUREX. Te pide tu contraseña, frase semilla o que instales una app de "acceso remoto" para "ayudarte".</div>
+      <div class="scam-signal">🔴 Señal: El soporte real NUNCA te pide contraseñas ni frase semilla</div>
+    </div>
+    <div class="scam">
+      <div class="scam-icon">💰</div>
+      <div class="scam-name">Promesas de duplicar cripto</div>
+      <div class="scam-desc">"Mándame 0.1 BTC y te devuelvo 0.2". Famosos, influencers o celebridades (generalmente deepfakes) promoviendo sorteos donde primero debes enviar cripto para recibir más.</div>
+      <div class="scam-signal">🔴 Señal: Nadie regala cripto. Si piden enviar primero — es estafa garantizada</div>
+    </div>
+    <div class="scam">
+      <div class="scam-icon">💘</div>
+      <div class="scam-name">Romance Scam</div>
+      <div class="scam-desc">Alguien que "conoces" online, construye una relación durante semanas o meses. Eventualmente tiene una "emergencia" o te invita a invertir en una plataforma cripto que controlan ellos.</div>
+      <div class="scam-signal">🔴 Señal: Jamás se han visto en persona y ya hablan de dinero o inversiones</div>
+    </div>
+    <div class="scam">
+      <div class="scam-icon">📱</div>
+      <div class="scam-name">Apps falsas</div>
+      <div class="scam-desc">Apps que se ven idénticas a Binance o Exodus pero son falsas. Registras tus datos y los hackers tienen acceso. También existen extensiones de Chrome maliciosas que roban wallets.</div>
+      <div class="scam-signal">🔴 Señal: Descarga siempre desde el sitio oficial — nunca desde links en mensajes</div>
+    </div>
+  </div>
+
+  <!-- EMERGENCY -->
+  <div class="emergency fade">
+    <div class="emergency-title">🚨 ¿Qué haces si crees que te hackearon?</div>
+    <div class="emergency-steps">
+      <div class="estep"><div class="estep-n">1</div><div><strong>Cambia tu contraseña inmediatamente</strong>Desde un dispositivo diferente si puedes — por si el tuyo está comprometido.</div></div>
+      <div class="estep"><div class="estep-n">2</div><div><strong>Revoca sesiones activas en Binance</strong>Binance → Seguridad → Gestión de dispositivos → cerrar todas las sesiones activas.</div></div>
+      <div class="estep"><div class="estep-n">3</div><div><strong>Contacta soporte oficial de Binance</strong>Solo a través de binance.com/es/chat — nunca por links externos ni redes sociales.</div></div>
+      <div class="estep"><div class="estep-n">4</div><div><strong>Si tienes billetera propia comprometida</strong>Crea una billetera nueva inmediatamente y transfiere todos los fondos a la nueva dirección.</div></div>
+      <div class="estep"><div class="estep-n">5</div><div><strong>Documenta todo</strong>Capturas de pantalla, correos, conversaciones — si hay que reportar a las autoridades lo necesitarás.</div></div>
+    </div>
+  </div>
+</div>
+
+<div class="hline"></div>
+
+<!-- WALLETS FRÍAS EN CONTEXTO -->
+<div class="wrap" id="wallets">
+  <div class="stag">05 — Exchange vs custodia propia</div>
+  <h2 class="stitle">¿DÓNDE <em>GUARDAR?</em></h2>
+  <p class="sintro">No todo el cripto debe estar en el mismo lugar. Entender la diferencia entre un exchange y una billetera propia es clave para proteger lo que acumulas.</p>
+
+  <div class="wallet-compare fade">
+    <div class="wc exchange">
+      <div class="wc-title">Exchange (Binance)</div>
+      <div class="wc-sub">Custodia de terceros — como un banco digital</div>
+      <div class="wc-item"><div class="wc-dot"></div><span>Binance guarda tu cripto — tú confías en ellos</span></div>
+      <div class="wc-item"><div class="wc-dot"></div><span>Fácil de usar para comprar, vender y retirar</span></div>
+      <div class="wc-item"><div class="wc-dot"></div><span>Si Binance falla o te bloquean, puedes tener problemas</span></div>
+      <div class="wc-item"><div class="wc-dot"></div><span>Ideal para cripto que usas activamente o vas a mover pronto</span></div>
+      <div class="wc-item"><div class="wc-dot"></div><span>No necesitas frase semilla</span></div>
+    </div>
+    <div class="wc cold">
+      <div class="wc-title">Billetera Propia</div>
+      <div class="wc-sub">Custodia personal — tú tienes el control total</div>
+      <div class="wc-item"><div class="wc-dot"></div><span>Tú y solo tú controlas el dinero — nadie puede bloquearte</span></div>
+      <div class="wc-item"><div class="wc-dot"></div><span>Requiere proteger tu frase semilla con máxima responsabilidad</span></div>
+      <div class="wc-item"><div class="wc-dot"></div><span>Exodus, Trust Wallet, MetaMask son las más populares</span></div>
+      <div class="wc-item"><div class="wc-dot"></div><span>Ideal para ahorros a mediano y largo plazo</span></div>
+      <div class="wc-item"><div class="wc-dot"></div><span>Ledger o Trezor = nivel máximo (dispositivo físico offline)</span></div>
+    </div>
+  </div>
+
+  <div class="alert safe fade">
+    <div class="alert-icon">💡</div>
+    <div>
+      <div class="alert-title">La estrategia inteligente para empezar</div>
+      <div class="alert-text"><strong>Para recibir pagos de AUREX y operar día a día:</strong> usa Binance. Es fácil, rápido y suficiente.<br><br><strong>Cuando acumules un monto que vale proteger mejor:</strong> transfiere una parte a Exodus o Trust Wallet. Así combinás la comodidad del exchange con la seguridad de la custodia propia.<br><br>El Módulo 6 te enseña a instalar y usar tu primera billetera propia paso a paso.</div>
+    </div>
+  </div>
+</div>
+
+<div class="hline"></div>
+
+<!-- REGLAS DE ORO -->
+<div class="wrap" id="reglas">
+  <div class="stag">06 — El decálogo</div>
+  <h2 class="stitle">12 REGLAS <em>DE ORO</em></h2>
+  <p class="sintro">Imprime esto. Ponlo donde puedas verlo. Compártelo con quien quieras empezar en cripto. <strong>Estas reglas han salvado millones de dólares.</strong></p>
+
+  <div class="golden fade">
+    <div class="gr"><div class="gr-num">01</div><div class="gr-text"><strong>Tu frase semilla es tuya y solo tuya</strong>Nunca se comparte. Nunca se digitaliza. Se guarda en papel físico, en lugar seguro.</div></div>
+    <div class="gr"><div class="gr-num">02</div><div class="gr-text"><strong>Activa el 2FA en todo — hoy, no mañana</strong>Google Authenticator en Binance, en tu correo y en cada plataforma que uses. Es el paso más impactante que puedes dar ahora mismo.</div></div>
+    <div class="gr"><div class="gr-num">03</div><div class="gr-text"><strong>Una contraseña única por plataforma</strong>Usa Bitwarden para generarlas y guardarlas. Nunca repitas contraseñas entre plataformas distintas.</div></div>
+    <div class="gr"><div class="gr-num">04</div><div class="gr-text"><strong>Verifica siempre la URL antes de ingresar</strong>Antes de escribir tu contraseña en cualquier sitio, confirma que la URL es exactamente la correcta. Un carácter diferente = sitio falso.</div></div>
+    <div class="gr"><div class="gr-num">05</div><div class="gr-text"><strong>Nadie de soporte te pedirá tu contraseña jamás</strong>Si alguien la pide — sea quien sea, con el pretexto que sea — es una estafa. Corta la comunicación.</div></div>
+    <div class="gr"><div class="gr-num">06</div><div class="gr-text"><strong>Descarga apps solo desde fuentes oficiales</strong>Binance: binance.com. Exodus: exodus.com. Trust Wallet: trustwallet.com. Nunca desde links en mensajes o redes sociales.</div></div>
+    <div class="gr"><div class="gr-num">07</div><div class="gr-text"><strong>Verifica siempre la dirección de destino antes de enviar</strong>Una vez confirmada la transacción, no hay vuelta atrás. Revisa los primeros y últimos 4 caracteres de la dirección — siempre.</div></div>
+    <div class="gr"><div class="gr-num">08</div><div class="gr-text"><strong>Si suena demasiado bueno — es una estafa</strong>Doblar tu cripto, rendimientos garantizados del 50%, plataformas mágicas. No existen. El que promete eso te está robando.</div></div>
+    <div class="gr"><div class="gr-num">09</div><div class="gr-text"><strong>No operes desde redes WiFi públicas</strong>Cafeterías, aeropuertos, hoteles. Cualquier persona en esa red puede interceptar tu tráfico. Usa solo tu red móvil o WiFi de tu casa.</div></div>
+    <div class="gr"><div class="gr-num">10</div><div class="gr-text"><strong>Mantén tu celular y apps actualizados</strong>Las actualizaciones de seguridad existen por algo. Un celular sin actualizar tiene vulnerabilidades conocidas que los hackers explotan.</div></div>
+    <div class="gr"><div class="gr-num">11</div><div class="gr-text"><strong>No presumas de cuánto tienes en cripto</strong>En redes sociales o en conversaciones. El "cripto flex" atrae exactamente al tipo de persona equivocada.</div></div>
+    <div class="gr"><div class="gr-num">12</div><div class="gr-text"><strong>Ante la duda, no hagas nada</strong>Si algo no te queda claro, si un paso te parece extraño, si sientes que algo está raro — para. Investiga. Pregunta. La prisa es el mejor aliado del estafador.</div></div>
+  </div>
+
+  <div class="disclaimer fade">
+    <div class="disc-lbl">⚠ Aviso Legal — Disclaimer</div>
+    <div class="disc-text">El contenido de este módulo es exclusivamente educativo e informativo sobre buenas prácticas de seguridad digital. No constituye asesoramiento financiero, técnico ni legal. Las criptomonedas son activos digitales con riesgos inherentes. AUREX y sus colaboradores no se hacen responsables de pérdidas derivadas de decisiones individuales. Cada persona es responsable de su propia seguridad digital. Para situaciones específicas, consulta con un profesional calificado.</div>
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="cta">
+  <h2 class="cta-title">AHORA<br><span>ESTÁS PROTEGIDA.</span></h2>
+  <p class="cta-sub">Seguridad activada. El siguiente módulo: Entender el mercado cripto sin perderse — qué significan los números que ves cada día.</p>
+  <div class="cta-badge">✦ AUREX Cripto Academy completado · Siguiente: Módulo 04</div>
+</div>
+
+<script>
+const obs = new IntersectionObserver(es => es.forEach(e => { if(e.isIntersecting) e.target.classList.add('on'); }), {threshold:0.07});
+document.querySelectorAll('.fade').forEach(el => obs.observe(el));
+</script>
+</body>
+</html>
